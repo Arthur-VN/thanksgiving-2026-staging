@@ -36,7 +36,8 @@ window.BF = {
   });
 
   window.BF.send = async function (payload) {
-    const body = Object.assign({ campaign: 'Black Friday 2026 Website Sale', page: location.pathname, submitted_at: new Date().toISOString() }, utm, payload);
+    // a page can set window.BF_CAMPAIGN before this script (e.g. the Thanksgiving page)
+    const body = Object.assign({ campaign: window.BF_CAMPAIGN || 'Black Friday 2026 Website Sale', page: location.pathname, submitted_at: new Date().toISOString() }, utm, payload);
     try { sessionStorage.setItem('bf_lead', JSON.stringify({ name: body.name, email: body.email, business: body.business, phone: body.phone || '' })); } catch (e) {}
     if (!CONFIG.ghlWebhook) { console.info('[BF demo] lead not sent (no GHL webhook yet):', body); return true; }
     try {
@@ -48,11 +49,14 @@ window.BF = {
   // "Only 10 available" counter: live from GHL (10 minus paid deposits), 10 small blocks with the taken ones dimmed
   const spots = document.querySelectorAll('[data-spots]');
   if (spots.length) {
-    const base = location.pathname.replace(/(checkout|thank-you|review)\/.*$/, '');
+    // site root, also when the page is a file like /thanksgiving.html
+    const base = location.pathname.replace(/[^/]*$/, '').replace(/(checkout|thank-you|review)\/$/, '');
     fetch(base + 'api/spots').then(r => r.json()).then(d => {
       if (!d || !d.ok) return;
+      // "Only 10 available · 10 left" says the same thing twice: show the count only once a spot is taken
+      const left = d.left <= 0 ? 'fully booked' : d.taken > 0 ? d.left + ' left' : '';
       spots.forEach(el => {
-        el.querySelector('[data-left]').textContent = (el.classList.contains('bf-spots-m') ? '' : ' · ') + (d.left > 0 ? d.left + ' left' : 'fully booked');
+        el.querySelector('[data-left]').textContent = left && !el.classList.contains('bf-spots-m') ? ' · ' + left : left;
         el.querySelector('i').innerHTML = Array.from({ length: d.total }, (_, i) => '<em' + (i < d.taken ? ' class="x"' : '') + '></em>').join('');
         el.classList.add('on');
       });
