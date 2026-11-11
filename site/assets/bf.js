@@ -27,6 +27,20 @@ window.BF = {
   const fmt = n => '$' + n.toLocaleString('en-US');
   window.BF.fmt = fmt;
 
+  // Embedded in an iframe (e.g. a GoHighLevel funnel page): our own pages (landing, checkout) stay in the
+  // frame so sessionStorage prefill keeps working; anything on another site (payment page, DMI site,
+  // Acuity) opens in the whole tab, not inside the frame.
+  const framed = window.top !== window.self;
+  const offsite = u => { try { return new URL(u, location.href).origin !== location.origin; } catch (e) { return false; } };
+  window.BF.go = function (u) {
+    if (framed && offsite(u)) { try { window.top.location.href = new URL(u, location.href).href; return; } catch (e) { window.open(u, '_top'); return; } }
+    location.href = u;
+  };
+  if (framed) document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (a && !a.target && offsite(a.href)) a.target = '_top';
+  }, true);
+
   // utm / source params travel with every lead so GHL can tell email vs social outreach apart
   const qs = new URLSearchParams(location.search);
   const utm = {};

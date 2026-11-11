@@ -157,7 +157,7 @@
     await window.BF.send({type:'deposit_started',package:p.name,package_price:p.price,design:design||undefined,deposit:DEPOSIT,hosting:HOSTING[hostSel()].label+' $'+HOSTING[hostSel()].price+'/month',name:d.name,email:d.email,business:d.business,phone:d.phone});
     try{sessionStorage.setItem('bf_pkg',k);}catch(err){}
     // GHL payment page; the email is passed along so the customer doesn't type it twice
-    location.href=CONFIG.payment[k]?CONFIG.payment[k]+'?email='+encodeURIComponent(d.email):('../thank-you/?pkg='+k+'&demo=1');
+    window.BF.go(CONFIG.payment[k]?CONFIG.payment[k]+'?email='+encodeURIComponent(d.email):('../thank-you/?pkg='+k+'&demo=1'));
   });
 })();
 </script>
