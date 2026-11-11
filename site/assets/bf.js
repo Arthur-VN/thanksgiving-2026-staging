@@ -87,7 +87,7 @@ window.BF = {
       const btn = f.querySelector('button[type=submit]');
       btn.disabled = true;
       await window.BF.send({ type: 'lead', form: f.dataset.lead, name: d.name, email: d.email, business: d.business });
-      location.href = 'checkout/';
+      location.href = window.BF_CHECKOUT || 'checkout/'; // a page can point to its own checkout (Thanksgiving)
     });
   });
 

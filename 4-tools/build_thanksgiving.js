@@ -26,7 +26,9 @@ sub('reserves your Black Friday price', 'reserves your Thanksgiving price');
 sub('Our Black Friday offers end soon.', 'Our Thanksgiving offers end soon.');
 if (/Black Friday/.test(h.replace(/<!--[\s\S]*?-->/g, ''))) throw new Error('Black Friday copy left: ' + h.match(/.{40}Black Friday.{40}/)[0]);
 // leads from this page are labelled Thanksgiving in GHL (bf.js reads it)
-sub('<script src="assets/bf.js"></script>', '<script>window.BF_CAMPAIGN = \'Thanksgiving 2026 Website Sale\';</script>\n<script src="assets/bf.js"></script>');
+// ...and every "reserve" button goes to the Thanksgiving checkout (site/thanksgiving-checkout/)
+sub('<script src="assets/bf.js"></script>', '<script>window.BF_CAMPAIGN = \'Thanksgiving 2026 Website Sale\'; window.BF_CHECKOUT = \'thanksgiving-checkout/\';</script>\n<script src="assets/bf.js"></script>');
+sub('href="checkout/', 'href="thanksgiving-checkout/', true);
 
 // Premium heading: one quiet label, a big silver "Premium", the price as its own block, approved inclusions under a hairline
 sub('<h2 class="tname" id="dmx-prm-h">Premium. <s class="bf-was">$2,000</s> <span class="tpx">$1,000</span><small><em class="bf-pct">50% OFF</em> Best value · + hosting from $25/month</small></h2>',
@@ -98,3 +100,25 @@ sub('</head>', CSS);
 
 fs.writeFileSync(path.join(root, 'site/thanksgiving.html'), h);
 console.log('site/thanksgiving.html', (Buffer.byteLength(h) / 1024 | 0) + ' KB');
+
+// ---------- 4. Thanksgiving checkout: site/thanksgiving-checkout/index.html from the Black Friday checkout ----------
+// Same packages, deposit, hosting, GHL payment links and payload; copy, links and campaign label changed.
+h = fs.readFileSync(path.join(root, 'site/checkout/index.html'), 'utf8');
+sub('<title>Reserve your Black Friday website | Detailers Movement</title>', '<title>Reserve your Thanksgiving website | Detailers Movement</title>');
+sub('<a class="logo" href="../" aria-label="Back to the Black Friday offer">', '<a class="logo" href="../thanksgiving" aria-label="Back to the Thanksgiving offer">');
+sub('href="../#', 'href="../thanksgiving#', true);
+sub('<h1>Choose your <span class="hl">Black Friday</span><br>website package.</h1>',
+  '<p class="tg-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21c.5-4.5 2.5-8 6-10.5"/><path d="M9 18c-4-1-5.5-5-4.5-10 5 .5 8.5 2 10.5 5.5C17 10 16 6 12.5 3c5.5 1 8.5 5 8 10.5-.5 5.5-6.5 7.5-11.5 4.5z"/></svg>Thanksgiving week special</p>\n        <h1>Choose your <span class="hl">Thanksgiving</span><br>website package.</h1>');
+sub('Reserve your Black Friday price', 'Reserve your Thanksgiving price');
+sub('<span>Black Friday website sale</span>', '<span>Thanksgiving website sale</span>');
+sub('Black Friday price', 'Thanksgiving price', true);
+if (/Black Friday/.test(h)) throw new Error('checkout: Black Friday copy left: ' + h.match(/.{40}Black Friday.{40}/)[0]);
+sub('<script src="../assets/bf.js"></script>', '<script>window.BF_CAMPAIGN = \'Thanksgiving 2026 Website Sale\';</script>\n<script src="../assets/bf.js"></script>');
+sub('</head>', `<style id="tg-checkout">
+.tg-pill{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;padding:6px 14px 6px 10px;border-radius:999px;background:rgba(245,165,36,.14);border:1px solid rgba(245,165,36,.45);color:#FFD08A;font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:.02em}
+.tg-pill svg{width:16px;height:16px;color:#F5A524}
+</style>
+</head>`);
+fs.mkdirSync(path.join(root, 'site/thanksgiving-checkout'), { recursive: true });
+fs.writeFileSync(path.join(root, 'site/thanksgiving-checkout/index.html'), h);
+console.log('site/thanksgiving-checkout/index.html', (Buffer.byteLength(h) / 1024 | 0) + ' KB');

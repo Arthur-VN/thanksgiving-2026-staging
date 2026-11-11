@@ -9,6 +9,6 @@
     var premium = !!a.closest('#premium');
     var el = document.getElementById(premium ? 'dmxP3Name' : 'vwName');
     var design = (a.closest('#standard') && !a.closest('#stdView')) ? '' : (el && el.textContent.trim()) || '';
-    location.href = 'checkout/?pkg=' + (premium ? 'premium' : 'standard') + (design ? '&design=' + encodeURIComponent(design) : '');
+    location.href = (window.BF_CHECKOUT || 'checkout/') + '?pkg=' + (premium ? 'premium' : 'standard') + (design ? '&design=' + encodeURIComponent(design) : '');
   }, true);
 })();
