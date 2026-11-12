@@ -12,6 +12,9 @@ export default {
     if (url.pathname === '/api/lead') return handleLead(req, env);
     if (url.pathname.startsWith('/api/feedback')) return handleFeedback(req, env, url);
     if (url.pathname === '/api/spots') return handleSpots(env);
+    // Thanksgiving Workers set HOME_PATH ("/thanksgiving") so the bare domain opens that page (same URL, no redirect).
+    // The live Black Friday Worker has no HOME_PATH, and "/" only reaches this code when listed in run_worker_first.
+    if (env.HOME_PATH && url.pathname === '/') return env.ASSETS.fetch(new Request(new URL(env.HOME_PATH, url), req));
     const res = await env.ASSETS.fetch(req);
     if (url.pathname.startsWith('/review')) {
       // the review board is private: never indexed, never cached

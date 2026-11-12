@@ -7,6 +7,6 @@
   "main": "src/worker.js",
   "compatibility_date": "2026-10-01",
   "workers_dev": true,
-  "assets": { "directory": "./site", "binding": "ASSETS", "html_handling": "auto-trailing-slash", "run_worker_first": ["/api/*", "/review*"] },
-  "vars": { "GHL_LOCATION_ID": "yqROQIaNeeK0xIpi4n67", "SPOTS_TOTAL": "10" }
+  "assets": { "directory": "./site", "binding": "ASSETS", "html_handling": "auto-trailing-slash", "run_worker_first": ["/", "/api/*", "/review*"] },
+  "vars": { "GHL_LOCATION_ID": "yqROQIaNeeK0xIpi4n67", "SPOTS_TOTAL": "10", "HOME_PATH": "/thanksgiving" }
 }

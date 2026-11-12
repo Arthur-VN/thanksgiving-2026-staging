@@ -1,0 +1,12 @@
+// Thanksgiving 2026 Website Sale: a SEPARATE Worker in DMI's Cloudflare account (does not touch "dmi-blackfriday").
+// Deploy:  npx wrangler deploy -c wrangler.thanksgiving.jsonc
+// Secret:  npx wrangler secret put GHL_TOKEN -c wrangler.thanksgiving.jsonc   (same token as Black Friday)
+// Domain:  Workers & Pages -> dmi-thanksgiving-2026 -> Settings -> Domains & Routes -> Custom Domain
+// The bare domain "/" shows the Thanksgiving landing (HOME_PATH). Guide: README-THANKSGIVING-DEPLOY.md
+{
+  "name": "dmi-thanksgiving-2026",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./site", "binding": "ASSETS", "html_handling": "auto-trailing-slash", "run_worker_first": ["/", "/api/*", "/review*"] },
+  "vars": { "GHL_LOCATION_ID": "yqROQIaNeeK0xIpi4n67", "SPOTS_TOTAL": "10", "HOME_PATH": "/thanksgiving" }
+}
