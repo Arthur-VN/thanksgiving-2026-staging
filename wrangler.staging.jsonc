@@ -1,0 +1,12 @@
+// STAGING copy of the site for QC (Thanksgiving 2026), on workers.dev only. Never touches the live
+// "dmi-blackfriday" Worker. Deploy: npx wrangler deploy -c wrangler.staging.jsonc
+// No FEEDBACK KV here (Ed's review board is live-only). /api/lead needs: npx wrangler secret put GHL_TOKEN -c wrangler.staging.jsonc
+{
+  "name": "dmi-thanksgiving-staging",
+  "account_id": "fef82a399f9b3e04c335d09da4bfb54c",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "assets": { "directory": "./site", "binding": "ASSETS", "html_handling": "auto-trailing-slash", "run_worker_first": ["/api/*", "/review*"] },
+  "vars": { "GHL_LOCATION_ID": "yqROQIaNeeK0xIpi4n67", "SPOTS_TOTAL": "10" }
+}
