@@ -96,7 +96,9 @@ function write(name, html) {
   const head = h.slice(0, h.indexOf('</head>'));
   const fonts = head.match(/<link rel="preconnect"[\s\S]*?display=swap" rel="stylesheet">/)[0];
   const headScript = head.match(/<script>[\s\S]*?<\/script>/)[0];
-  const tgStyle = head.match(/<style id="tg-fixes">[\s\S]*?<\/style>/)[0];
+  // every <style id="tg-..."> in <head> (tg-fixes, tg-redesign, ...), in order
+  const tgStyle = (head.match(/<style id="tg-[\w-]+">[\s\S]*?<\/style>/g) || []).join('\n');
+  if (!/id="tg-redesign"/.test(tgStyle)) throw new Error('tg-redesign style missing');
   let body = h.slice(h.indexOf('>', h.indexOf('<body')) + 1, h.lastIndexOf('</body>'));
   body = body
     .replace(/(\b(?:src|href|poster|srcset|data-full)=")assets\//g, '$1' + LIVE + 'assets/')
