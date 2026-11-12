@@ -76,6 +76,8 @@ if (window.__dmiAdd) { window.addEventListener = window.__dmiAdd; delete window.
     p.style.setProperty('width', '100%', 'important');
     p.style.setProperty('overflow', 'visible', 'important');
     p.style.setProperty('transform', 'none', 'important');
+    p.style.setProperty('background', 'transparent', 'important'); // GHL sections/rows are white by default
+    p.style.setProperty('box-shadow', 'none', 'important');
   }
 })();
 </script>`;
@@ -134,7 +136,11 @@ function write(name, html) {
   const h = read('site/thanksgiving-checkout/index.html');
   const head = h.slice(0, h.indexOf('</head>'));
   const fonts = head.match(/<link rel="preconnect"[\s\S]*?display=swap" rel="stylesheet">/)[0];
-  const tgStyle = head.match(/<style id="tg-checkout">[\s\S]*?<\/style>/)[0];
+  let tgStyle = head.match(/<style id="tg-checkout">[\s\S]*?<\/style>/)[0];
+  // the page background (navy + glows) also goes on the block itself, so it shows whatever GHL puts around it
+  const pageBg = tgStyle.match(/(?:^|[}\s])body\{(background:[^}]*)\}/);
+  if (!pageBg) throw new Error('checkout body background not found');
+  tgStyle += '\n<style>#dmi-tg-root{' + pageBg[1] + ';color:var(--text);min-height:100vh}</style>';
   let body = h.slice(h.indexOf('>', h.indexOf('<body')) + 1, h.lastIndexOf('</body>'));
   body = body
     .replace(/(\b(?:src|href)=")\.\.\/assets\//g, '$1' + LIVE + 'assets/')
