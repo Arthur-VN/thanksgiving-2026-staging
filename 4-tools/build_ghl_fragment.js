@@ -14,6 +14,12 @@ const LIVE = 'https://blackfriday2026.detailersmovement.com/';
 const outDir = process.argv[2] || root;
 const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 const STEPS = { landing: '/thanksgiving', checkout: '/thanksgiving-checkout' };
+// Hero video hosted in GHL Media. full = plays with sound when "Watch" is clicked.
+// teaser = silent looping background (upload site/assets/tg/giveaway-teaser.mp4, ~380 KB); empty = still frame.
+const TG_VIDEO = {
+  full: 'https://files.leadconnectorhq.com/file/6af55f5abd36322ae25248f1/dm-thanksgiving-giveaway-16x9.mp4',
+  teaser: '',
+};
 
 function rep(s, from, to, all) {
   const n = s.split(from).length - 1;
@@ -104,6 +110,15 @@ function write(name, html) {
     .replace(/(\b(?:src|href|poster|srcset|data-full)=")assets\//g, '$1' + LIVE + 'assets/')
     .replace(/'assets\/'/g, "'" + LIVE + "assets/'")
     .replace(/href="thanksgiving-checkout\/\?/g, 'href="dmi:checkout?');
+  // hero video: GHL Media URLs, poster inlined (the tg/ assets are not on the live site)
+  const TG = LIVE + 'assets/tg/';
+  body = rep(body, 'data-full="' + TG + 'giveaway.mp4"', 'data-full="' + TG_VIDEO.full + '"');
+  body = rep(body, 'poster="' + TG + 'giveaway-poster.webp"',
+    'poster="data:image/webp;base64,' + fs.readFileSync(path.join(root, 'site/assets/tg/giveaway-poster.webp')).toString('base64') + '"');
+  body = TG_VIDEO.teaser
+    ? rep(body, 'src="' + TG + 'giveaway-teaser.mp4"', 'src="' + TG_VIDEO.teaser + '"')
+    : rep(body, ' src="' + TG + 'giveaway-teaser.mp4"', '').replace(/(<video class="tg-v"[^>]*?) loop autoplay/, '$1');
+  if (body.includes(TG)) throw new Error('assets/tg/ URL left');
   body = rep(body, "window.BF_CHECKOUT = 'thanksgiving-checkout/';", 'window.BF_CHECKOUT = window.DMI_TG.checkout;');
   body = rep(body, '<script src="' + LIVE + 'assets/js/lenis.min.js"></script>', script(read('site/assets/js/lenis.min.js')));
   body = rep(body, '<script src="' + LIVE + 'assets/bf.js"></script>', script(ghlBf()));
