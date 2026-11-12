@@ -341,6 +341,14 @@ sub('</body>', `<script>
   try{(window.dataLayer=window.dataLayer||[]).push({event:'tg_video_play'})}catch(e){}});
  v.addEventListener('ended',function(){if(w.classList.contains('on'))v.controls=true});
 })();
+/* menu links scroll without leaving "#section" in the URL, and a reload starts at the top
+   (links from the checkout like thanksgiving#standard still land on their section) */
+(function(){var clean=function(){if(location.hash)try{history.replaceState(history.state,'',location.pathname+location.search)}catch(e){}};
+ try{history.scrollRestoration='manual'}catch(e){}
+ var nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
+ if(nav&&nav.type==='reload'){clean();scrollTo(0,0);addEventListener('load',function(){setTimeout(function(){scrollTo(0,0)},0)})}
+ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href').length>1)setTimeout(clean,60)},true);
+})();
 </script>
 </body>`);
 
