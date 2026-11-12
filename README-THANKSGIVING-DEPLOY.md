@@ -3,15 +3,15 @@
 Trang Thanksgiving chạy thành **một Worker riêng**, tên `dmi-thanksgiving-2026`, trong tài khoản Cloudflare của DMI.
 Worker Black Friday `dmi-blackfriday` và tên miền `blackfriday2026.detailersmovement.com` **giữ nguyên, không đụng tới**.
 
-- Repo: https://github.com/Arthur-VN/dmi-blackfriday-2026-staging, branch `staging/thanksgiving-2026`
+- Repo: https://github.com/Arthur-VN/thanksgiving-2026-staging, branch `main`
 - Bản xem trước (tài khoản Arthur): https://dmi-thanksgiving-staging.arthur-fef.workers.dev
 - Tên miền đề xuất: `thanksgiving2026.detailersmovement.com` (đổi tuỳ DMI)
 
 ## Deploy (khoảng 10 phút)
 
 ```bash
-git clone -b staging/thanksgiving-2026 https://github.com/Arthur-VN/dmi-blackfriday-2026-staging.git
-cd dmi-blackfriday-2026-staging
+git clone https://github.com/Arthur-VN/thanksgiving-2026-staging.git
+cd thanksgiving-2026-staging
 npx wrangler login
 npx wrangler deploy -c wrangler.thanksgiving.jsonc
 npx wrangler secret put GHL_TOKEN -c wrangler.thanksgiving.jsonc
