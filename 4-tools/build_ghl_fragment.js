@@ -80,7 +80,7 @@ const header = (what, path) => `<!--
   Leads go to GHL through ${LIVE}api/lead. Images, videos and fonts load from ${LIVE} - keep that site online.
 -->`;
 function check(body) {
-  const left = body.match(/(?:src|href|poster)="(?:\.\.\/)?(?:assets|checkout|thank-you|thanksgiving)[\/"#?-]/g);
+  const left = body.match(/(?:src|href|poster|data-full)="(?:\.\.\/)?(?:assets|checkout|thank-you|thanksgiving)[\/"#?-]/g);
   if (left) throw new Error('relative URLs left: ' + left.join(', '));
   if (/<script src=/.test(body)) throw new Error('external script left');
 }
@@ -99,7 +99,7 @@ function write(name, html) {
   const tgStyle = head.match(/<style id="tg-fixes">[\s\S]*?<\/style>/)[0];
   let body = h.slice(h.indexOf('>', h.indexOf('<body')) + 1, h.lastIndexOf('</body>'));
   body = body
-    .replace(/(\b(?:src|href|poster|srcset)=")assets\//g, '$1' + LIVE + 'assets/')
+    .replace(/(\b(?:src|href|poster|srcset|data-full)=")assets\//g, '$1' + LIVE + 'assets/')
     .replace(/'assets\/'/g, "'" + LIVE + "assets/'")
     .replace(/href="thanksgiving-checkout\/\?/g, 'href="dmi:checkout?');
   body = rep(body, "window.BF_CHECKOUT = 'thanksgiving-checkout/';", 'window.BF_CHECKOUT = window.DMI_TG.checkout;');
